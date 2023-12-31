@@ -22,7 +22,7 @@ data:
         },
     }
     # Uncomment 'django3_saml2_nbplugin' if you want to enable SSO
-    PLUGINS = ['netbox_dns', 'django3_saml2_nbplugin', 'netbox_proxbox', 'netbox_topology_views']
+    PLUGINS = ['netbox_dns', 'django3_saml2_nbplugin']
     # NetBox plugins configuration definition
     PLUGINS_CONFIG = {
         'django3_saml2_nbplugin': {
@@ -77,35 +77,35 @@ data:
                 }
             }
         },
-        'netbox_proxbox': {
-            'proxmox': 
-                {
-                    'domain': 'example.pve.com',    # May also be IP address
-                    'http_port': 8006,
-                    'user': 'someuser',   # always required
-                    'token': {
-                        'name': 'sometokenname',	# Only type the token name and not the 'user@pam:tokenID' format
-                        'value': 'tokenvalue'
-                    },
-                    'ssl': False
-                },
-            'netbox': {
-                'domain': 'localhost',     # Ensure localhost is added to ALLOWED_HOSTS
-                'http_port': 8080,     # Gunicorn port.
-                'token': 'sometoken',
-                'ssl': False,	# There is no support to SSL on Netbox yet, so let it always False.
-                'settings': {
-                    'virtualmachine_role_id' : integer,
-                    'node_role_id' : integer,
-                    'site_id': integer
-                }
-            }
-        },
-        'netbox_topology_views': {
-            'static_image_directory': 'netbox_topology_views/img',
-            'allow_coordinates_saving': True,
-            'always_save_coordinates': True
-        },
+        # 'netbox_proxbox': {
+        #     'proxmox': 
+        #         {
+        #             'domain': 'example.pve.com',    # May also be IP address
+        #             'http_port': 8006,
+        #             'user': 'someuser',   # always required
+        #             'token': {
+        #                 'name': 'sometokenname',	# Only type the token name and not the 'user@pam:tokenID' format
+        #                 'value': 'tokenvalue'
+        #             },
+        #             'ssl': False
+        #         },
+        #     'netbox': {
+        #         'domain': 'localhost',     # Ensure localhost is added to ALLOWED_HOSTS
+        #         'http_port': 8080,     # Gunicorn port.
+        #         'token': 'sometoken',
+        #         'ssl': False,	# There is no support to SSL on Netbox yet, so let it always False.
+        #         'settings': {
+        #             'virtualmachine_role_id' : integer,
+        #             'node_role_id' : integer,
+        #             'site_id': integer
+        #         }
+        #     }
+        # },
+        # 'netbox_topology_views': {
+        #     'static_image_directory': 'netbox_topology_views/img',
+        #     'allow_coordinates_saving': True,
+        #     'always_save_coordinates': True
+        # },
         'netbox_dns': {
             'allow_underscores_in_hostnames': True,
             'tolerate_leading_underscore_types': ["TXT", "SRV", "CNAME"],
