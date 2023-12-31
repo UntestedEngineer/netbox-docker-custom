@@ -2,7 +2,7 @@
 
 This application is based off of the original netbox-docker maintained by the netbox community [Netbox Docker](https://github.com/netbox-community/netbox-docker) but has several plugins installed.  The dockerfile uses the image as a base: [Netbox Dockerhub](https://hub.docker.com/r/netboxcommunity/netbox).
 
-**12/31/2023**: Currently Netbox v3.7.0 is not compatible with netbox_topology_views or netbox-proxbox.  While the docker image is still configured to install the python libraries please leave the plugins disabled in the startup configuration (commented out) until support becomes available.  An updated example is available.  If these plugins are necessary please fall back to using Netbox v3.6.9.  For this reason a "Release" is not yet available but an updated commit is.
+**12/31/2023**: Currently Netbox v3.7.0 is not compatible with netbox_topology_views or netbox-proxbox.  While the docker image is still configured to install the python libraries please leave the plugins disabled in the startup configuration (commented out) until support becomes available.  An updated example is available [netbox-startup-config-configmap-example.yaml](https://github.com/UntestedEngineer/netbox-docker-custom/blob/main/Kubernetes/netbox-startup-config-configmap-example.yaml).  If these plugins are necessary please fall back to using Netbox v3.6.9.  For this reason a "Release" is not yet available but an updated commit is.
 
 ## Installed plugins
 - [django3-auth-saml2](https://github.com/jeremyschulman/django3-auth-saml2)
