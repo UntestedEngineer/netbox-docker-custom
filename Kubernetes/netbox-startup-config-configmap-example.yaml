@@ -1,0 +1,123 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: netbox-startup-config
+  namespace: example
+data:
+  # NetBox plugins definition and configuration
+  netbox-plugins.py: |
+    # Enter every plugin to be enabled by NetBox
+    LOGGING = {
+        'version': 1,
+        'disable_existing_loggers': False,
+        'handlers': {
+            'console': {
+                'level': 'DEBUG',
+                'class': 'logging.StreamHandler',
+            },
+        },
+        'root': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+        },
+    }
+    # Uncomment 'django3_saml2_nbplugin' if you want to enable SSO
+    PLUGINS = ['netbox_dns', 'django3_saml2_nbplugin', 'netbox_proxbox', 'netbox_topology_views']
+    # NetBox plugins configuration definition
+    PLUGINS_CONFIG = {
+        'django3_saml2_nbplugin': {
+            # Use the NetBox default remote backend
+            # 'AUTHENTICATION_BACKEND': 'netbox.authentication.RemoteUserBackend',
+            # Use the NetBox LDAP backend, default configs
+            # 'AUTHENTICATION_BACKEND': 'django3_saml2_nbplugin.backends.SAML2AttrUserBackend',
+            # Use the NetBox LDAP backend, configs defined below
+            'AUTHENTICATION_BACKEND': 'django3_saml2_nbplugin.backends.SAML2CustomAttrUserBackend',
+            # Custom URL to validate incoming SAML requests against
+            'ASSERTION_URL': 'https://example.domain.com', #changeme
+            # Populates the Issuer element in authn reques e.g defined as "Audience URI (SP Entity ID)" in SSO
+            'ENTITY_ID': 'Netbox', #changeme
+            # # The next URL used to redirect the User after login is successful
+            'DEFAULT_NEXT_URL': '/',
+            # # The URL to be used for SSO sign-in purposes
+            'DEFAULT_SSO_ACS_URL': '/sso/acs/',
+            # Metadata is required, choose either remote url
+            #'METADATA_AUTO_CONF_URL': "https://mycorp.okta.com/appd/sajfalkdsflkads/sso/saml/metadata",
+            # or local file path
+            'METADATA_LOCAL_FILE_PATH': '/opt/netbox/sso-saml2-metadata.xml',
+            # Settings for SAML2CustomAttrUserBackend. Optional.
+            'CUSTOM_ATTR_BACKEND': {
+                # Attribute containing the username. Optional.
+                'USERNAME_ATTR': 'user_name',
+                # Attribute containing the user's email. Optional.
+                'MAIL_ATTR': 'email',
+                # Attribute containing the user's first name. Optional.
+                'FIRST_NAME_ATTR': 'first_name',
+                # Attribute containing the user's last name. Optional.
+                'LAST_NAME_ATTR': 'last_name',
+                # Set to True to always update the user on logon
+                # from SAML attributes on logon. Defaults to False.
+                'ALWAYS_UPDATE_USER': True,
+                # Attribute that contains groups. Optional.
+                'GROUP_ATTR': 'memberOf',
+                # Dict of user flags to groups.
+                # If the user is in the group then the flag will be set to True. Optional.
+                # Used as an override to the same variable set in ldap_config.py in netbox-configmap
+                # It is recommended to fill these in as the same configurations from netbox-configmap.yaml function inconsistently when SSO is enabled
+                'FLAGS_BY_GROUP': {
+                    'is_active': 'example_group', #changeme
+                    'is_staff': 'example_group', #changeme
+                    'is_superuser': 'example_group' #changeme
+                },
+                # Dict of SAML groups to NetBox groups. Optional.
+                # Groups must be created beforehand in NetBox.
+                # Used to populate NetBox defined user groups (right) with members of groups in the SSO source (left). Not necessary if NetBox groups and members are already defined in the SSO source
+                'GROUP_MAPPINGS': {
+                    'engineering': 'administrators',
+                    # 'SSO_GROUP2': 'LOCAL_NETBOX_GROUP2'
+                }
+            }
+        },
+        'netbox_proxbox': {
+            'proxmox': 
+                {
+                    'domain': 'example.pve.com',    # May also be IP address
+                    'http_port': 8006,
+                    'user': 'someuser',   # always required
+                    'token': {
+                        'name': 'sometokenname',	# Only type the token name and not the 'user@pam:tokenID' format
+                        'value': 'tokenvalue'
+                    },
+                    'ssl': False
+                },
+            'netbox': {
+                'domain': 'localhost',     # Ensure localhost is added to ALLOWED_HOSTS
+                'http_port': 8080,     # Gunicorn port.
+                'token': 'sometoken',
+                'ssl': False,	# There is no support to SSL on Netbox yet, so let it always False.
+                'settings': {
+                    'virtualmachine_role_id' : integer,
+                    'node_role_id' : integer,
+                    'site_id': integer
+                }
+            }
+        },
+        'netbox_topology_views': {
+            'static_image_directory': 'netbox_topology_views/img',
+            'allow_coordinates_saving': True,
+            'always_save_coordinates': True
+        },
+        'netbox_dns': {
+            'allow_underscores_in_hostnames': True,
+            'tolerate_leading_underscore_types': ["TXT", "SRV", "CNAME"],
+            'tolerate_non_rfc1035_types': []
+        }
+    }
+  # Run plugin depednancies
+  run-plugin-dependancies.sh: |
+    ./manage.py migrate && ./manage.py collectstatic --no-input
+  # Script for starting rqworker, which handles reports
+  start-rqworker.sh: |
+    /opt/netbox/venv/bin/python /opt/netbox/netbox/manage.py rqworker &>/dev/null &disown;
+  # Script for fixing permission issue in unit temporary folder
+  nginx-caching-fix.sh: |
+    chown unit:root -R /opt/unit/tmp/

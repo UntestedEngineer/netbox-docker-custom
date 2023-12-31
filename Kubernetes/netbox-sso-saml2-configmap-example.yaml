@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: netbox-sso-saml2-xml
+  namespace: example
+data:
+  sso-saml2-metadata.xml: |
+    xml metadata goes here

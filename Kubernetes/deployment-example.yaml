@@ -1,0 +1,201 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: netbox
+  namespace: example
+  labels:
+    app: netbox
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: netbox
+  template:
+    metadata:
+      labels:
+        app: netbox
+        app.kubernetes.io/name: netbox
+    spec:   
+      containers:
+      # NetBox container using the netbox-docker image: https://github.com/netbox-community/netbox-docker
+      - name: netbox
+        image: untestedengineer/netbox:latest-ubuntu
+        imagePullPolicy: Always
+        resources:
+          limits:
+            cpu: "750m"
+            memory: "1536Mi"
+        ports:
+        - name: http
+          containerPort: 8080
+        readinessProbe: # will mark the pod as ready once the initialization script is completed and will probe every 20 seconds
+          httpGet:
+            path: /
+            port: http
+          initialDelaySeconds: 30
+          periodSeconds: 60
+        envFrom:
+          - configMapRef:
+              name: netbox-config
+        lifecycle: # Will run the post-startup scripts detailed in netbox-startup-configmap.yaml
+          postStart:
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - >
+                  bash /home/run-plugin-dependancies.sh &&
+                  bash /home/start-rqworker.sh &&
+                  bash /home/nginx-caching-fix.sh
+        volumeMounts:
+        # Mounting secrets for netbox and other related components
+        - name: netbox-topology-views
+          mountPath: /opt/netbox/netbox/static/netbox_topology_views/img
+        - name: db-password
+          mountPath: /run/secrets/db_password
+          subPath: db_password
+          readOnly: true
+        - name: redis-password
+          mountPath: /run/secrets/redis_password
+          subPath: redis_password
+          readOnly: true
+        - name: redis-cache-password
+          mountPath: /run/secrets/redis_cache_password
+          subPath: redis_cache_password
+          readOnly: true
+        - name: secret-key
+          mountPath: /run/secrets/secret_key
+          subPath: secret_key
+          readOnly: true
+        - name: superuser-api-token
+          mountPath: /run/secrets/superuser_api_token
+          subPath: superuser_api_token
+        - name: superuser-password
+          mountPath: /run/secrets/superuser_password
+          subPath: superuser_password
+          readOnly: true
+        - name: aws-s3-access-key-id
+          mountPath: /run/secrets/aws_access_key_id
+          subPath: aws_access_key_id
+        - name: aws-s3-secret-access-key
+          mountPath: /run/secrets/aws_secret_access_key
+          subPath: aws_secret_access_key
+        - name: aws-s3-storage-bucket-name
+          mountPath: /run/secrets/aws_storage_bucket_name
+          subPath: aws_storage_bucket_name
+        - name: aws-s3-region-name
+          mountPath: /run/secrets/aws_s3_region_name
+          subPath: aws_s3_region_name          
+        # Persistent Volume paths
+        - mountPath: /etc/netbox/config/netbox-plugins.py
+          name: netbox-plugins
+          subPath: netbox-plugins.py
+        - mountPath: /home/run-plugin-dependancies.sh
+          name: run-plugin-dependancies
+          subPath: run-plugin-dependancies.sh
+        - mountPath: /home/start-rqworker.sh
+          name: start-rqworker
+          subPath: start-rqworker.sh
+        - mountPath: /home/nginx-caching-fix.sh
+          name: nginx-caching-fix
+          subPath: nginx-caching-fix.sh
+        - name: sso-saml2-xml
+          mountPath: /opt/netbox/sso-saml2-metadata.xml
+          subPath: sso-saml2-metadata.xml
+      restartPolicy: Always
+      volumes:
+      # Reference to configmaps and PVs
+      - name: netbox-topology-views
+        persistentVolumeClaim:
+          claimName: pvc-netbox-topology-views
+      - name: netbox-plugins
+        configMap:
+          name: netbox-startup-config
+          items:
+          - key: "netbox-plugins.py"
+            path: "netbox-plugins.py"
+      - name: run-plugin-dependancies
+        configMap:
+          name: netbox-startup-config
+          items:
+          - key: "run-plugin-dependancies.sh"
+            path: "run-plugin-dependancies.sh"
+      - name: start-rqworker
+        configMap:
+          name: netbox-startup-config
+          items:
+          - key: "start-rqworker.sh"
+            path: "start-rqworker.sh"
+      - name: nginx-caching-fix
+        configMap:
+          name: netbox-startup-config
+          items:
+          - key: "nginx-caching-fix.sh"
+            path: "nginx-caching-fix.sh"
+      - name: sso-saml2-xml
+        configMap:
+          name: netbox-sso-saml2-xml
+          items:
+            - key: sso-saml2-metadata.xml
+              path: sso-saml2-metadata.xml
+      # Populate via secret
+      - name: db-password
+        secret:
+          secretName: netbox-db-redis
+          items:
+          - key: db_password
+            path: db_password
+      - name: redis-password
+        secret:
+          secretName: netbox-db-redis
+          items:
+          - key: redis_password
+            path: redis_password
+      - name: redis-cache-password
+        secret:
+          secretName: netbox-db-redis
+          items:
+          - key: redis_cache_password
+            path: redis_cache_password
+      - name: secret-key
+        secret:
+          secretName: netbox-secret
+          items:
+          - key: secret_key
+            path: secret_key
+      - name: superuser-password
+        secret:
+          secretName: netbox-secret
+          items:
+          - key: superuser_password
+            path: superuser_password
+      - name: superuser-api-token
+        secret:
+          secretName: netbox-secret
+          items:
+          - key: superuser_api_token
+            path: superuser_api_token
+      - name: aws-s3-access-key-id
+        secret:
+          secretName: aws-s3-access-1
+          items:
+          - key: aws_access_key_id
+            path: aws_access_key_id
+      - name: aws-s3-secret-access-key
+        secret:
+          secretName: aws-s3-access-1
+          items:
+          - key: aws_secret_access_key
+            path: aws_secret_access_key
+      - name: aws-s3-storage-bucket-name
+        secret:
+          secretName: aws-s3-access-1
+          items:
+          - key: aws_storage_bucket_name
+            path: aws_storage_bucket_name
+      - name: aws-s3-region-name
+        secret:
+          secretName: aws-s3-access-1
+          items:
+          - key: aws_s3_region_name
+            path: aws_s3_region_name            
