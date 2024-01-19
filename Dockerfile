@@ -1,5 +1,5 @@
 # Create first stage build for additional plugins
-FROM netboxcommunity/netbox:v3.7.0 as base
+FROM netboxcommunity/netbox:v3.7.1 as base
 
 COPY ./plugin_requirements.txt /
 COPY extra_config_files/ /etc/netbox/config/
@@ -12,7 +12,7 @@ RUN cd /opt/netbox/netbox/netbox-proxbox \
 WORKDIR /opt/netbox/netbox
 
 # Copy first stage build to final container 
-FROM netboxcommunity/netbox:v3.7.0
+FROM netboxcommunity/netbox:v3.7.1
 
 RUN apt-get update && apt-get install xmlsec1 -y
 
