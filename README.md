@@ -2,6 +2,13 @@
 
 This application is based off of the original netbox-docker maintained by the netbox community [Netbox Docker](https://github.com/netbox-community/netbox-docker) but has several plugins installed.  The dockerfile uses the image as a base: [Netbox Dockerhub](https://hub.docker.com/r/netboxcommunity/netbox).
 
+## Netbox 4.x compatibility
+The following plugins are not yet compatible with Netbox 4.x so they are disabled in the startup configuration file (commented out).
+- [netbox-topology-views](https://github.com/mattieserver/netbox-topology-views)
+- [netbox-proxbox](https://github.com/netdevopsbr/netbox-proxbox)
+
+A **netbox-4.x-startup-config-configmap-example.yaml** has been provided to support the above plugins being disabled when using Netbox 4.x
+
 ## Installed plugins
 - [django3-auth-saml2](https://github.com/jeremyschulman/django3-auth-saml2)
 - [netbox-plugin-auth-saml2](https://github.com/jeremyschulman/netbox-plugin-auth-saml2)
