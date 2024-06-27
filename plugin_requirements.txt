@@ -1,4 +1,4 @@
 django3-auth-saml2
 netbox-plugin-auth-saml2
 netbox-plugin-dns
-# netbox-topology-views
+netbox-topology-views

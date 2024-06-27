@@ -22,7 +22,7 @@ data:
     #     },
     # }
     # Uncomment 'django3_saml2_nbplugin' if you want to enable SSO
-    PLUGINS = ['netbox_dns', 'django3_saml2_nbplugin', 'netbox_proxbox', 'netbox_topology_views']
+    PLUGINS = ['netbox_dns', 'django3_saml2_nbplugin', 'netbox_topology_views']
     # NetBox plugins configuration definition
     PLUGINS_CONFIG = {
         'django3_saml2_nbplugin': {
@@ -96,11 +96,11 @@ data:
         #         }
         #     }
         # },
-        # 'netbox_topology_views': {
-        #     'static_image_directory': 'netbox_topology_views/img',
-        #     'allow_coordinates_saving': True,
-        #     'always_save_coordinates': True
-        # },
+        'netbox_topology_views': {
+            'static_image_directory': 'netbox_topology_views/img',
+            'allow_coordinates_saving': True,
+            'always_save_coordinates': True
+        },
         'netbox_dns': {
             'allow_underscores_in_hostnames': True,
             'tolerate_leading_underscore_types': ["TXT", "SRV", "CNAME"],

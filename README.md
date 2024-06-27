@@ -4,7 +4,6 @@ This application is based off of the original netbox-docker maintained by the ne
 
 ## Netbox 4.x compatibility
 The following plugins are not yet compatible with Netbox 4.x so they are disabled in the startup configuration file (commented out).
-- [netbox-topology-views](https://github.com/mattieserver/netbox-topology-views)
 - [netbox-proxbox](https://github.com/netdevopsbr/netbox-proxbox)
 
 A **netbox-4.x-startup-config-configmap-example.yaml** has been provided to support the above plugins being disabled when using Netbox 4.x
