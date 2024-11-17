@@ -6,7 +6,7 @@ metadata:
   labels:
     app.kubernetes.io/instance: netbox
     app.kubernetes.io/name: netbox
-    app.kubernetes.io/version: v4.1.5
+    app.kubernetes.io/version: v4.1.6
     app: netbox
 spec:
   replicas: 1
@@ -20,13 +20,13 @@ spec:
       labels:
         app.kubernetes.io/instance: netbox
         app.kubernetes.io/name: netbox
-        app.kubernetes.io/version: v4.1.5
+        app.kubernetes.io/version: v4.1.6
         app: netbox
     spec:   
       containers:
       # NetBox container using the netbox-docker image: https://github.com/netbox-community/netbox-docker
       - name: netbox
-        image: untestedengineer/netbox-docker-custom:v4.1.5-ubuntu
+        image: untestedengineer/netbox-docker-custom:v4.1.6-ubuntu
         imagePullPolicy: Always
         resources:
           limits:
