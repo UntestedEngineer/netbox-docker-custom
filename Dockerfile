@@ -1,5 +1,5 @@
 # Create first stage build for additional plugins
-FROM netboxcommunity/netbox:v4.1.4 AS base
+FROM netboxcommunity/netbox:v4.1.5 AS base
 
 COPY ./plugin_requirements.txt /
 COPY extra_config_files/ /etc/netbox/config/
@@ -12,7 +12,7 @@ RUN /opt/netbox/venv/bin/pip install  --no-warn-script-location -r /plugin_requi
 WORKDIR /opt/netbox/netbox
 
 # Copy first stage build to final container 
-FROM netboxcommunity/netbox:v4.1.4
+FROM netboxcommunity/netbox:v4.1.5
 
 RUN apt-get update && apt-get install xmlsec1 -y
 
