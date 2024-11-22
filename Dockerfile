@@ -1,5 +1,5 @@
 # Create first stage build for additional plugins
-FROM netboxcommunity/netbox:v4.1. AS base
+FROM netboxcommunity/netbox:v4.1.7 AS base
 
 COPY ./plugin_requirements.txt /
 COPY extra_config_files/ /etc/netbox/config/
