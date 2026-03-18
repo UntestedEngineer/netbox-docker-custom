@@ -1,4 +1,4 @@
 django3-auth-saml2
 netbox-plugin-auth-saml2
-netbox-plugin-dns==1.5.0
+netbox-plugin-dns==1.5.1
 netbox-topology-views==4.5.0
