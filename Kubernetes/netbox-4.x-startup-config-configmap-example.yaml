@@ -96,11 +96,11 @@ data:
         #         }
         #     }
         # },
-        # 'netbox_topology_views': {
-        #     'static_image_directory': 'netbox_topology_views/img',
-        #     'allow_coordinates_saving': True,
-        #     'always_save_coordinates': True
-        # },
+        'netbox_topology_views': {
+            'static_image_directory': 'netbox_topology_views/img',
+            'allow_coordinates_saving': True,
+            'always_save_coordinates': True
+        },
         'netbox_dns': {
             'allow_underscores_in_hostnames': True,
             'tolerate_leading_underscore_types': ["TXT", "SRV", "CNAME"],
@@ -114,5 +114,5 @@ data:
   start-rqworker.sh: |
     /opt/netbox/venv/bin/python /opt/netbox/netbox/manage.py rqworker &>/dev/null &disown;
   # Script for fixing permission issue in unit temporary folder
-  nginx-caching-fix.sh: |
-    chown unit:root -R /opt/unit/tmp/
+  granian-caching-fix.sh: |
+    chown netbox:root -R /tmp/

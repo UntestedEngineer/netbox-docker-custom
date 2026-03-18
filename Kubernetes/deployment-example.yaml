@@ -53,7 +53,7 @@ spec:
                 - >
                   bash /home/run-plugin-dependancies.sh &&
                   bash /home/start-rqworker.sh &&
-                  bash /home/nginx-caching-fix.sh
+                  bash /home/granian-caching-fix.sh
         volumeMounts:
         # Mounting secrets for netbox and other related components
         - name: netbox-topology-views
@@ -103,9 +103,9 @@ spec:
         - mountPath: /home/start-rqworker.sh
           name: start-rqworker
           subPath: start-rqworker.sh
-        - mountPath: /home/nginx-caching-fix.sh
-          name: nginx-caching-fix
-          subPath: nginx-caching-fix.sh
+        - mountPath: /home/granian-caching-fix.sh
+          name: granian-caching-fix
+          subPath: granian-caching-fix.sh
         - name: sso-saml2-xml
           mountPath: /opt/netbox/sso-saml2-metadata.xml
           subPath: sso-saml2-metadata.xml
@@ -133,12 +133,12 @@ spec:
           items:
           - key: "start-rqworker.sh"
             path: "start-rqworker.sh"
-      - name: nginx-caching-fix
+      - name: granian-caching-fix
         configMap:
           name: netbox-startup-config
           items:
-          - key: "nginx-caching-fix.sh"
-            path: "nginx-caching-fix.sh"
+          - key: "granian-caching-fix.sh"
+            path: "granian-caching-fix.sh"
       - name: sso-saml2-xml
         configMap:
           name: netbox-sso-saml2-xml
