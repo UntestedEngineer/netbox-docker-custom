@@ -1,18 +1,16 @@
 # Create first stage build for additional plugins
-FROM netboxcommunity/netbox:v4.5.5 AS base
+FROM netboxcommunity/netbox:v4.5.7 AS base
 
 COPY ./plugin_requirements.txt /opt/netbox
+# COPY netbox-proxbox/ /opt/netbox/netbox/netbox-proxbox
 COPY extra_config_files/ /etc/netbox/config/
-## COPY netbox-proxbox/ /opt/netbox/netbox/netbox-proxbox
 RUN /usr/local/bin/uv pip install -r /opt/netbox/plugin_requirements.txt
-
-# RUN cd /opt/netbox/netbox/netbox-proxbox \
-#     && /opt/netbox/venv/bin/python3 setup.py develop
+# RUN /usr/local/bin/uv pip install -e ./netbox-proxbox
 
 WORKDIR /opt/netbox/netbox
 
 # Copy first stage build to final container 
-FROM netboxcommunity/netbox:v4.5.5
+FROM netboxcommunity/netbox:v4.5.7
 
 
 RUN apt-get update && apt-get install xmlsec1 -y
